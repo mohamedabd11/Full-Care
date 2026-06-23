@@ -1,35 +1,40 @@
-import { View } from "react-native";
-import { Screen } from "@/components/Screen";
-import { AppText } from "@/components/AppText";
-import { colors } from "@/theme/colors";
-import { careSystems } from "@/data/systems";
+import { Pressable, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { Screen } from '@/components/Screen';
+import { AppText } from '@/components/AppText';
+import { colors } from '@/theme/colors';
+import { careSystems } from '@/data/systems';
 
 const trackLabel: Record<string, string> = {
-  dual: "سوداني + عالمي",
-  sudanese_only: "سوداني خالص",
-  na: "",
+  dual: 'سوداني + عالمي',
+  sudanese_only: 'سوداني خالص',
+  na: '',
 };
 
-export default function SystemsScreen() {
+export default function SystemsIndex() {
+  const router = useRouter();
+
   return (
     <Screen>
       <AppText weight="bold" style={{ fontSize: 24, color: colors.ink }}>
         أنظمة العناية
       </AppText>
       <AppText style={{ fontSize: 14, color: colors.muted, marginTop: 6 }}>
-        ستة أنظمة مجانية — افتحي ما يناسب اهتمامكِ
+        ستة أنظمة مجانية — اضغطي لفتح أي نظام
       </AppText>
 
       <View style={{ marginTop: 20, gap: 12 }}>
         {careSystems.map((system) => (
-          <View
+          <Pressable
             key={system.id}
+            onPress={() => router.push(`/(tabs)/systems/${system.id}`)}
             style={{
               backgroundColor: colors.white,
               borderRadius: 20,
               padding: 18,
-              flexDirection: "row",
-              alignItems: "center",
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
           >
             <View
@@ -38,8 +43,8 @@ export default function SystemsScreen() {
                 height: 52,
                 borderRadius: 16,
                 backgroundColor: colors.cream,
-                alignItems: "center",
-                justifyContent: "center",
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               <AppText style={{ fontSize: 26 }}>{system.icon}</AppText>
@@ -54,7 +59,8 @@ export default function SystemsScreen() {
                 </AppText>
               ) : null}
             </View>
-          </View>
+            <Ionicons name="chevron-back" size={20} color={colors.muted} />
+          </Pressable>
         ))}
       </View>
     </Screen>
