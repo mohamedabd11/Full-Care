@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "@/components/Screen";
 import { AppText } from "@/components/AppText";
 import { colors } from "@/theme/colors";
+import { ProgressCard } from "@/components/gamification/ProgressCard";
 
 export default function HomeScreen() {
   return (
@@ -14,6 +15,11 @@ export default function HomeScreen() {
       <AppText style={{ fontSize: 15, color: colors.muted, marginTop: 6 }}>
         رفيقتكِ اليومية للعناية والجمال
       </AppText>
+
+      {/* بطاقة التقدّم والنقاط */}
+      <View style={{ marginTop: 20 }}>
+        <ProgressCard />
+      </View>
 
       {/* بطاقة حبسة العروس */}
       <View

@@ -1,10 +1,13 @@
-import { View } from 'react-native';
+import { useEffect } from 'react';
+import { Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { colors } from '@/theme/colors';
 import type { HabsaState } from '@/lib/habsa/habsaEngine';
 import { STAGE_CONTENT, SMOKE_GRADUAL_SCHEDULE } from '@/data/habsaContent';
+import { useGamification } from '@/lib/gamification/GamificationContext';
+import { POINTS_PER_TASK } from '@/lib/gamification/gamificationEngine';
 
 export function HabsaDashboard({
   state,
@@ -13,11 +16,17 @@ export function HabsaDashboard({
   state: HabsaState;
   onReset: () => void;
 }) {
+  const { isTaskDone, toggleTask, reportHabsaCompleted } = useGamification();
   const stage = state.currentStage;
   const content = stage ? STAGE_CONTENT[stage.key] : null;
 
   // اليوم داخل المرحلة الحالية (1-based)
   const dayWithinStage = stage ? state.currentDay - stage.startDay + 1 : 0;
+
+  // عند اكتمال الرحلة تُمنح شارة "عروس مكتملة"
+  useEffect(() => {
+    if (state.status === 'completed') reportHabsaCompleted();
+  }, [state.status, reportHabsaCompleted]);
 
   return (
     <View>
@@ -139,16 +148,46 @@ export function HabsaDashboard({
             </View>
           )}
 
-          {/* المبادئ */}
-          <View style={{ marginTop: 14, gap: 8 }}>
-            {content.principlesAr.map((p, i) => (
-              <View key={i} style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
-                <Ionicons name="ellipse" size={8} color={colors.accent} style={{ marginTop: 8 }} />
-                <AppText style={{ flex: 1, fontSize: 14, color: colors.ink, lineHeight: 24 }}>
-                  {p}
-                </AppText>
-              </View>
-            ))}
+          {/* مهام اليوم القابلة للإنجاز */}
+          <AppText weight="semibold" style={{ fontSize: 14, color: colors.ink, marginTop: 16 }}>
+            مهام اليوم <AppText style={{ fontSize: 12, color: colors.accent }}>(+{POINTS_PER_TASK} لكل مهمة)</AppText>
+          </AppText>
+          <View style={{ marginTop: 10, gap: 8 }}>
+            {content.principlesAr.map((p, i) => {
+              const taskId = `habsa:${stage!.key}:${i}`;
+              const done = isTaskDone(taskId);
+              return (
+                <Pressable
+                  key={i}
+                  onPress={() => toggleTask(taskId)}
+                  style={{
+                    flexDirection: 'row',
+                    gap: 10,
+                    alignItems: 'center',
+                    backgroundColor: done ? colors.accentLight : colors.cream,
+                    borderRadius: 12,
+                    padding: 12,
+                  }}
+                >
+                  <Ionicons
+                    name={done ? 'checkmark-circle' : 'ellipse-outline'}
+                    size={22}
+                    color={done ? colors.accentDark : colors.muted}
+                  />
+                  <AppText
+                    style={{
+                      flex: 1,
+                      fontSize: 14,
+                      color: colors.ink,
+                      lineHeight: 24,
+                      textDecorationLine: done ? 'line-through' : 'none',
+                    }}
+                  >
+                    {p}
+                  </AppText>
+                </Pressable>
+              );
+            })}
           </View>
 
           {/* تنبيه السلامة */}

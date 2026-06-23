@@ -41,7 +41,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "node src/lib/habsa/habsaEngine.test.ts && node src/lib/habsa/integration.test.ts"
+    "test": "node src/lib/habsa/habsaEngine.test.ts && node src/lib/habsa/integration.test.ts && node src/lib/gamification/gamificationEngine.test.ts"
   },
   "private": true
 }

@@ -3,9 +3,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "@/components/Screen";
 import { AppText } from "@/components/AppText";
 import { colors } from "@/theme/colors";
+import { ProgressCard } from "@/components/gamification/ProgressCard";
+import { BadgesGrid } from "@/components/gamification/BadgesGrid";
 
 const rows: { icon: keyof typeof Ionicons.glyphMap; label: string }[] = [
-  { icon: "trophy", label: "نقاطي ومستواي" },
   { icon: "heart", label: "المفضلة" },
   { icon: "notifications", label: "التنبيهات" },
   { icon: "shield-checkmark", label: "الخصوصية والشروط" },
@@ -36,7 +37,17 @@ export default function AccountScreen() {
         </AppText>
       </View>
 
-      <View style={{ marginTop: 26, gap: 10 }}>
+      {/* التقدّم والنقاط */}
+      <View style={{ marginTop: 22 }}>
+        <ProgressCard />
+      </View>
+
+      {/* الشارات */}
+      <View style={{ marginTop: 24 }}>
+        <BadgesGrid />
+      </View>
+
+      <View style={{ marginTop: 24, gap: 10 }}>
         {rows.map((row) => (
           <View
             key={row.label}
