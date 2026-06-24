@@ -28,7 +28,10 @@ import {
   saveUnlockedBadges,
   loadHabsaCompletedFlag,
   saveHabsaCompletedFlag,
+  setStorageUserId,
 } from './gamificationStorage';
+import { setHabsaStorageUserId } from '@/lib/habsa/habsaStorage';
+import { useAuth } from '@/lib/auth/AuthContext';
 import { toISODate } from '@/lib/habsa/dateUtils';
 
 interface GamificationValue {
@@ -45,13 +48,22 @@ interface GamificationValue {
 const GamificationContext = createContext<GamificationValue | null>(null);
 
 export function GamificationProvider({ children }: { children: ReactNode }) {
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [log, setLog] = useState<CompletedByDate>({});
   const [unlocked, setUnlocked] = useState<string[]>([]);
   const [habsaDone, setHabsaDone] = useState(false);
 
   useEffect(() => {
+    const uid = user?.id ?? null;
+    setStorageUserId(uid);
+    setHabsaStorageUserId(uid);
+  }, [user]);
+
+  useEffect(() => {
+    if (authLoading) return;
     let mounted = true;
+    setLoading(true);
     (async () => {
       const [l, b, h] = await Promise.all([
         loadCompletedLog(),
@@ -67,7 +79,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [authLoading, user]);
 
   const stats = useMemo(() => buildStats(log, habsaDone), [log, habsaDone]);
   const level = useMemo(() => levelForPoints(stats.totalPoints), [stats.totalPoints]);
