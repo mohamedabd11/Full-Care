@@ -1,7 +1,7 @@
 import "../global.css";
 
 import { useEffect } from "react";
-import { I18nManager } from "react-native";
+import { I18nManager, LogBox } from "react-native";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -19,6 +19,11 @@ import {
 // فرض اتجاه الكتابة من اليمين لليسار (التطبيق عربي بالكامل)
 I18nManager.allowRTL(true);
 I18nManager.forceRTL(true);
+
+// تجاهل تحذير معروف وغير ضار من داخل expo-router (مع React 19) عند تحديد المسار الأولي
+LogBox.ignoreLogs([
+  "Can't perform a React state update on a component that hasn't mounted yet",
+]);
 
 SplashScreen.preventAutoHideAsync();
 

@@ -1,4 +1,5 @@
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
+import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "@/components/Screen";
 import { AppText } from "@/components/AppText";
@@ -6,6 +7,8 @@ import { colors } from "@/theme/colors";
 import { ProgressCard } from "@/components/gamification/ProgressCard";
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   return (
     <Screen>
       {/* ترويسة الترحيب */}
@@ -22,13 +25,15 @@ export default function HomeScreen() {
       </View>
 
       {/* بطاقة حبسة العروس */}
-      <View
-        style={{
+      <Pressable
+        onPress={() => router.push("/(tabs)/habsa")}
+        style={({ pressed }) => ({
           marginTop: 24,
           backgroundColor: colors.primary,
           borderRadius: 24,
           padding: 22,
-        }}
+          opacity: pressed ? 0.9 : 1,
+        })}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Ionicons name="flame" size={26} color={colors.white} />
@@ -39,7 +44,7 @@ export default function HomeScreen() {
         <AppText style={{ fontSize: 14, color: colors.white, marginTop: 8, lineHeight: 24 }}>
           رحلة التجهيز السودانية الكاملة قبل العرس — مراحل واضحة تأخذكِ بيدكِ خطوة بخطوة.
         </AppText>
-      </View>
+      </Pressable>
 
       {/* بطاقات سريعة */}
       <AppText weight="bold" style={{ fontSize: 18, color: colors.ink, marginTop: 28 }}>
@@ -47,10 +52,26 @@ export default function HomeScreen() {
       </AppText>
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 14 }}>
-        <QuickCard icon="sparkles" label="أنظمة العناية" />
-        <QuickCard icon="water" label="عاداتي اليومية" />
-        <QuickCard icon="trophy" label="نقاطي" />
-        <QuickCard icon="heart" label="المفضلة" />
+        <QuickCard
+          icon="sparkles"
+          label="أنظمة العناية"
+          onPress={() => router.push("/(tabs)/systems")}
+        />
+        <QuickCard
+          icon="water"
+          label="عاداتي اليومية"
+          onPress={() => router.push("/(tabs)/systems/daily_habits")}
+        />
+        <QuickCard
+          icon="heart"
+          label="المفضلة"
+          onPress={() => router.push("/(tabs)/account")}
+        />
+        <QuickCard
+          icon="trophy"
+          label="نقاطي"
+          onPress={() => router.push("/(tabs)/account")}
+        />
       </View>
     </Screen>
   );
@@ -59,25 +80,29 @@ export default function HomeScreen() {
 function QuickCard({
   icon,
   label,
+  onPress,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
   label: string;
+  onPress: () => void;
 }) {
   return (
-    <View
-      style={{
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => ({
         width: "47%",
         backgroundColor: colors.white,
         borderRadius: 20,
         padding: 18,
         alignItems: "center",
         gap: 10,
-      }}
+        opacity: pressed ? 0.85 : 1,
+      })}
     >
       <Ionicons name={icon} size={28} color={colors.accent} />
       <AppText weight="semibold" style={{ fontSize: 14, color: colors.ink, textAlign: "center" }}>
         {label}
       </AppText>
-    </View>
+    </Pressable>
   );
 }
