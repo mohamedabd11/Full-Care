@@ -23,19 +23,21 @@ I18nManager.forceRTL(true);
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     Cairo_400Regular,
     Cairo_600SemiBold,
     Cairo_700Bold,
   });
 
   useEffect(() => {
-    if (fontsLoaded) {
+    // نخفي شاشة البداية بمجرد تحميل الخطوط أو عند فشلها (حتى لا يعلق التطبيق)
+    if (fontsLoaded || fontError) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, fontError]);
 
-  if (!fontsLoaded) {
+  // ننتظر الخطوط، لكن إن فشل تحميلها نكمل بالخط الافتراضي بدل التعليق
+  if (!fontsLoaded && !fontError) {
     return null;
   }
 
