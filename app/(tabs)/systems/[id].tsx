@@ -7,11 +7,13 @@ import { TaskChecklist } from '@/components/TaskChecklist';
 import { colors } from '@/theme/colors';
 import { getSystemById } from '@/data/systems';
 import { POINTS_PER_TASK } from '@/lib/gamification/gamificationEngine';
+import { useFavorites } from '@/lib/favorites/FavoritesContext';
 
 export default function SystemDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const system = getSystemById(id);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   if (!system) {
     return (
@@ -42,6 +44,24 @@ export default function SystemDetail() {
         <AppText weight="bold" style={{ fontSize: 22, color: colors.ink, flex: 1 }}>
           {system.nameAr}
         </AppText>
+        {/* زر المفضلة */}
+        <Pressable
+          onPress={() => toggleFavorite(system.id)}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: colors.white,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Ionicons
+            name={isFavorite(system.id) ? 'heart' : 'heart-outline'}
+            size={22}
+            color={colors.primary}
+          />
+        </Pressable>
       </View>
 
       <AppText style={{ fontSize: 14, color: colors.muted, lineHeight: 26 }}>

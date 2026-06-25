@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Modal, Pressable, View } from 'react-native';
+import { useRouter, type Href } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '@/components/Screen';
 import { AppText } from '@/components/AppText';
@@ -10,15 +11,16 @@ import { BadgesGrid } from '@/components/gamification/BadgesGrid';
 import { AuthScreen } from '@/components/auth/AuthScreen';
 import { useAuth } from '@/lib/auth/AuthContext';
 
-const rows: { icon: keyof typeof Ionicons.glyphMap; label: string }[] = [
-  { icon: 'heart', label: 'المفضلة' },
-  { icon: 'notifications', label: 'التنبيهات' },
-  { icon: 'shield-checkmark', label: 'الخصوصية والشروط' },
-  { icon: 'information-circle', label: 'عن التطبيق' },
+const rows: { icon: keyof typeof Ionicons.glyphMap; label: string; href: Href }[] = [
+  { icon: 'heart', label: 'المفضلة', href: '/favorites' },
+  { icon: 'notifications', label: 'التنبيهات', href: '/notifications' },
+  { icon: 'shield-checkmark', label: 'الخصوصية والشروط', href: '/privacy' },
+  { icon: 'information-circle', label: 'عن التطبيق', href: '/about' },
 ];
 
 export default function AccountScreen() {
   const { user, displayName, signOut } = useAuth();
+  const router = useRouter();
   const [showAuth, setShowAuth] = useState(false);
 
   return (
@@ -72,15 +74,17 @@ export default function AccountScreen() {
 
       <View style={{ marginTop: 24, gap: 10 }}>
         {rows.map((row) => (
-          <View
+          <Pressable
             key={row.label}
-            style={{
+            onPress={() => router.push(row.href)}
+            style={({ pressed }) => ({
               backgroundColor: colors.white,
               borderRadius: 16,
               padding: 16,
               flexDirection: 'row',
               alignItems: 'center',
-            }}
+              opacity: pressed ? 0.85 : 1,
+            })}
           >
             <Ionicons name={row.icon} size={22} color={colors.accent} />
             <AppText
@@ -90,7 +94,7 @@ export default function AccountScreen() {
               {row.label}
             </AppText>
             <Ionicons name="chevron-back" size={20} color={colors.muted} />
-          </View>
+          </Pressable>
         ))}
       </View>
 
